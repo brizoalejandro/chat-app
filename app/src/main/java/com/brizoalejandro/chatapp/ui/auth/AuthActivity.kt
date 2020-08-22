@@ -1,17 +1,14 @@
-package com.brizoalejandro.chatapp.ui
+package com.brizoalejandro.chatapp.ui.auth
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.Toast
 import com.brizoalejandro.chatapp.R
-import com.brizoalejandro.chatapp.ui.auth.AuthPresenter
 import kotlinx.android.synthetic.main.activity_auth.*
-import nl.komponents.kovenant.ui.failUi
 import java.lang.ref.WeakReference
 
-class MainActivity : AppCompatActivity() {
-
+class AuthActivity : AppCompatActivity() {
 
     private var nameInput: EditText? = null
     private var emailInput: EditText? = null
@@ -31,18 +28,15 @@ class MainActivity : AppCompatActivity() {
         registration_btn?.let {
             it.setOnClickListener {
                 authPresenter.createUser(
-                    nameInput?.text.toString(),
-                    emailInput?.text.toString(),
-                    passwordInput?.text.toString(),
+                    nameInput.toString(),
+                    emailInput.toString(),
+                    passwordInput.toString(),
                     WeakReference(this)
-                ).success {
-
-                }.failUi { error ->
-                    Toast.makeText(this, error.message, Toast.LENGTH_SHORT).show()
-                }
+                )
             }
         }
 
     }
+
 
 }

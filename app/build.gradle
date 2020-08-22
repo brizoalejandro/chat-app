@@ -35,6 +35,11 @@ dependencies {
 
     //Firebase
     implementation 'com.google.firebase:firebase-auth:19.3.2'
+    //Koin
+    implementation 'org.koin:koin-android:2.1.6'
+    //Kovenant
+    implementation 'nl.komponents.kovenant:kovenant:3.3.0'
+    implementation 'nl.komponents.kovenant:kovenant-android:3.3.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
