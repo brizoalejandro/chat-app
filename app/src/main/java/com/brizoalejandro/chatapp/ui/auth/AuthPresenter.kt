@@ -13,6 +13,7 @@ class AuthPresenter: AuthInterface, KoinComponent {
 
     private val authService: AuthService = get()
 
+
     override fun createUser(name: String,
                             email: String,
                             password: String,
@@ -20,5 +21,11 @@ class AuthPresenter: AuthInterface, KoinComponent {
         return authService.createUser(name, email, password, activity)
     }
 
+    override fun isLoggedIn(): Boolean {
+        return authService.isLoggedIn()
+    }
 
+    override fun logout() {
+        authService.logout()
+    }
 }

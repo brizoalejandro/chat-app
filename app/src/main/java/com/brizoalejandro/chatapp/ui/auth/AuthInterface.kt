@@ -13,4 +13,7 @@ interface AuthInterface {
                    password: String,
                    activity: WeakReference<Activity>): Promise<FirebaseUser?, Exception>
 
+    fun isLoggedIn(): Boolean
+    fun logout()
+
 }

@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseAuth
 import java.lang.ref.WeakReference
 import android.util.Log
 import com.brizoalejandro.chatapp.extensions.toUser
+import com.brizoalejandro.chatapp.ui.auth.AuthInterface
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
@@ -16,7 +17,7 @@ import org.koin.core.KoinComponent
 import java.lang.Exception
 
 
-class AuthService(val context: Context): KoinComponent {
+class AuthService(val context: Context): AuthInterface, KoinComponent {
 
     private val TAG = "[AUTH]"
 
@@ -31,17 +32,24 @@ class AuthService(val context: Context): KoinComponent {
 
 
 
-    fun isLoggedIn(): Boolean {
+    override fun isLoggedIn(): Boolean {
         return currentUser != null
     }
 
-    fun createUser(name: String, email: String?, password: String?, activity: WeakReference<Activity>): Promise<FirebaseUser?, Exception> {
+    override fun logout() {
+        if (isLoggedIn()) {
+            firebaseAuth.signOut()
+        }
+    }
+
+
+    override fun createUser(name: String, email: String, password: String, activity: WeakReference<Activity>): Promise<FirebaseUser?, Exception> {
 
         val deferred = deferred<FirebaseUser?, Exception>()
 
         //AUTH
         firebaseAuth?.let {
-            it.createUserWithEmailAndPassword(email ?: "", password?: "")
+            it.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(activity.get()!!) { result ->
                     if (result.isSuccessful) {
                         Log.d(TAG, "Auth Success")

@@ -1,19 +1,18 @@
 package com.brizoalejandro.chatapp.ui.auth
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import com.brizoalejandro.chatapp.R
+import com.brizoalejandro.chatapp.extensions.goTo
 import com.brizoalejandro.chatapp.services.AuthService
-import com.brizoalejandro.chatapp.ui.MainActivity
+import com.brizoalejandro.chatapp.ui.main.MainActivity
 import kotlinx.android.synthetic.main.activity_auth.*
 import nl.komponents.kovenant.ui.failUi
 import nl.komponents.kovenant.ui.successUi
 import org.koin.core.KoinComponent
-import org.koin.core.get
 import java.lang.ref.WeakReference
 
 class AuthActivity : AppCompatActivity(), KoinComponent {
@@ -23,7 +22,6 @@ class AuthActivity : AppCompatActivity(), KoinComponent {
     private var passwordInput: EditText? = null
 
     private var authPresenter = AuthPresenter()
-    private val authService: AuthService = get()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,8 +41,9 @@ class AuthActivity : AppCompatActivity(), KoinComponent {
                     passwordInput?.text.toString(),
                     WeakReference(this)
                 ).successUi { user ->
-                    if (user != null)
-                        goToHome()
+                    if (user != null) {
+                        this.goTo(MainActivity::class.java)
+                    }
                 }.failUi { error ->
                     Toast.makeText(this, error.message, Toast.LENGTH_SHORT).show()
                 }.always {
@@ -58,16 +57,9 @@ class AuthActivity : AppCompatActivity(), KoinComponent {
     override fun onStart() {
         super.onStart()
 
-        if (authService.isLoggedIn()) {
-            goToHome()
+        if (authPresenter.isLoggedIn()) {
+            this.goTo(MainActivity::class.java)
         }
-    }
-
-    private fun goToHome() {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(intent)
-        finish()
     }
 
 }

@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:name=".ChatApplication"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.MainActivity"></activity>
+        <activity android:name=".ui.main.MainActivity"></activity>
         <activity android:name=".ui.auth.AuthActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
