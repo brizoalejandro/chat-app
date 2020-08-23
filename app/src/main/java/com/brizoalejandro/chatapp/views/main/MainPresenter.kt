@@ -1,4 +1,4 @@
-package com.brizoalejandro.chatapp.ui.main
+package com.brizoalejandro.chatapp.views.main
 
 import com.brizoalejandro.chatapp.services.AuthService
 import org.koin.core.KoinComponent

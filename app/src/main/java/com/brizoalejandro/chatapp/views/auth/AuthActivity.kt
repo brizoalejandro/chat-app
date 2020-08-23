@@ -1,4 +1,4 @@
-package com.brizoalejandro.chatapp.ui.auth
+package com.brizoalejandro.chatapp.views.auth
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -7,8 +7,7 @@ import android.widget.EditText
 import android.widget.Toast
 import com.brizoalejandro.chatapp.R
 import com.brizoalejandro.chatapp.extensions.goTo
-import com.brizoalejandro.chatapp.services.AuthService
-import com.brizoalejandro.chatapp.ui.main.MainActivity
+import com.brizoalejandro.chatapp.views.main.MainActivity
 import kotlinx.android.synthetic.main.activity_auth.*
 import nl.komponents.kovenant.ui.failUi
 import nl.komponents.kovenant.ui.successUi

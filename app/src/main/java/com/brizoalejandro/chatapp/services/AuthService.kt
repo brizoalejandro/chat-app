@@ -6,7 +6,7 @@ import com.google.firebase.auth.FirebaseAuth
 import java.lang.ref.WeakReference
 import android.util.Log
 import com.brizoalejandro.chatapp.extensions.toUser
-import com.brizoalejandro.chatapp.ui.auth.AuthInterface
+import com.brizoalejandro.chatapp.views.auth.AuthInterface
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
@@ -25,7 +25,7 @@ class AuthService(val context: Context): AuthInterface, KoinComponent {
         get() { return FirebaseAuth.getInstance() }
 
     val firebaseDB: FirebaseFirestore
-        get() { return  Firebase.firestore }
+        get() { return Firebase.firestore }
 
     val currentUser: FirebaseUser?
         get() { return firebaseAuth.currentUser }

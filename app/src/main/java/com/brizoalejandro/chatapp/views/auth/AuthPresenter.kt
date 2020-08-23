@@ -1,4 +1,4 @@
-package com.brizoalejandro.chatapp.ui.auth
+package com.brizoalejandro.chatapp.views.auth
 
 import android.app.Activity
 import com.brizoalejandro.chatapp.services.AuthService
