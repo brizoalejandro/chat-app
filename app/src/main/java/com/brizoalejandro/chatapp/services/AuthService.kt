@@ -8,9 +8,6 @@ import android.util.Log
 import com.brizoalejandro.chatapp.extensions.toUser
 import com.brizoalejandro.chatapp.views.auth.AuthInterface
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import nl.komponents.kovenant.Promise
 import nl.komponents.kovenant.deferred
 import org.koin.core.KoinComponent
@@ -40,7 +37,7 @@ class AuthService(val context: Context, val repoService: RepositoryService): Aut
     }
 
 
-    override fun createUser(name: String, email: String, password: String, activity: WeakReference<Activity>): Promise<FirebaseUser?, Exception> {
+    override fun createUser(email: String, password: String, activity: WeakReference<Activity>): Promise<FirebaseUser?, Exception> {
 
         val deferred = deferred<FirebaseUser?, Exception>()
 
@@ -55,7 +52,7 @@ class AuthService(val context: Context, val repoService: RepositoryService): Aut
                         repoService.firebaseDB?.let { db ->
                             db.collection("users")
                                 .document(it.currentUser!!.uid)
-                                .set(it.currentUser?.toUser(name)!!.asHashmap())
+                                .set(it.currentUser?.toUser()!!.asHashmap())
                                 .addOnSuccessListener { ref ->
                                     Log.d(TAG, "User saved")
                                     deferred.resolve(firebaseAuth?.currentUser)
@@ -72,6 +69,8 @@ class AuthService(val context: Context, val repoService: RepositoryService): Aut
                     deferred.reject(error)
                 }
         }
+
+
 
         return deferred.promise
     }

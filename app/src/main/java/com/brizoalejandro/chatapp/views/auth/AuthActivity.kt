@@ -16,7 +16,6 @@ import java.lang.ref.WeakReference
 
 class AuthActivity : AppCompatActivity(), KoinComponent {
 
-    private var nameInput: EditText? = null
     private var emailInput: EditText? = null
     private var passwordInput: EditText? = null
 
@@ -27,7 +26,6 @@ class AuthActivity : AppCompatActivity(), KoinComponent {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
 
-        nameInput = name_input.editText
         emailInput = email_input.editText
         passwordInput = password_input.editText
 
@@ -35,7 +33,6 @@ class AuthActivity : AppCompatActivity(), KoinComponent {
             it.setOnClickListener {
                 loading_layout?.visibility = View.VISIBLE
                 authPresenter.createUser(
-                    nameInput?.text.toString(),
                     emailInput?.text.toString(),
                     passwordInput?.text.toString(),
                     WeakReference(this)
