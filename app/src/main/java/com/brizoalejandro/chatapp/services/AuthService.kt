@@ -5,8 +5,11 @@ import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
 import java.lang.ref.WeakReference
 import android.util.Log
-import android.widget.Toast
+import com.brizoalejandro.chatapp.extensions.toUser
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import nl.komponents.kovenant.Promise
 import nl.komponents.kovenant.deferred
 import org.koin.core.KoinComponent
@@ -17,28 +20,46 @@ class AuthService(val context: Context): KoinComponent {
 
     private val TAG = "[AUTH]"
 
-    var firebaseAuth: FirebaseAuth? = null
+    val firebaseAuth: FirebaseAuth
+        get() { return FirebaseAuth.getInstance() }
+
+    val firebaseDB: FirebaseFirestore
+        get() { return  Firebase.firestore }
 
     val currentUser: FirebaseUser?
-        get() { return firebaseAuth?.currentUser }
+        get() { return firebaseAuth.currentUser }
 
 
-    init {
-        firebaseAuth = FirebaseAuth.getInstance()
+
+    fun isLoggedIn(): Boolean {
+        return currentUser != null
     }
 
-    fun createUser(name: String?, email: String?, password: String?, activity: WeakReference<Activity>): Promise<FirebaseUser?, Exception> {
+    fun createUser(name: String, email: String?, password: String?, activity: WeakReference<Activity>): Promise<FirebaseUser?, Exception> {
 
         val deferred = deferred<FirebaseUser?, Exception>()
-        
 
+        //AUTH
         firebaseAuth?.let {
             it.createUserWithEmailAndPassword(email ?: "", password?: "")
                 .addOnCompleteListener(activity.get()!!) { result ->
                     if (result.isSuccessful) {
-                        Log.d(TAG, "Authentication Success")
+                        Log.d(TAG, "Auth Success")
 
-                        deferred.resolve(firebaseAuth?.currentUser)
+                        //SAVE user
+                        firebaseDB?.let { db ->
+                            db.collection("users")
+                                .document(it.currentUser!!.uid)
+                                .set(it.currentUser?.toUser(name)!!.asHashmap())
+                                .addOnSuccessListener { ref ->
+                                    Log.d(TAG, "User saved")
+                                    deferred.resolve(firebaseAuth?.currentUser)
+                                }.addOnFailureListener { e ->
+                                    Log.e(TAG + "DB error", e.toString())
+                                    deferred.reject(e)
+                                }
+                        }
+
                     }
                 }
                 .addOnFailureListener { error ->
