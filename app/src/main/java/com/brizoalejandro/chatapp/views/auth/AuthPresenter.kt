@@ -14,11 +14,10 @@ class AuthPresenter: AuthInterface, KoinComponent {
     private val authService: AuthService = get()
 
 
-    override fun createUser(name: String,
-                            email: String,
+    override fun createUser(email: String,
                             password: String,
                             activity: WeakReference<Activity>): Promise<FirebaseUser?, Exception> {
-        return authService.createUser(name, email, password, activity)
+        return authService.createUser(email, password, activity)
     }
 
     override fun isLoggedIn(): Boolean {

@@ -8,8 +8,7 @@ import java.lang.ref.WeakReference
 
 interface AuthInterface {
 
-    fun createUser(name: String,
-                   email: String,
+    fun createUser(email: String,
                    password: String,
                    activity: WeakReference<Activity>): Promise<FirebaseUser?, Exception>
 
