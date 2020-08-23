@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Chat App</string>
+
+    <string name="name_field">Name</string>
+    <string name="email_field">Email</string>
+    <string name="password_field">Password</string>
+    <string name="register_btn_text">Enter</string>
+
 </resources>
