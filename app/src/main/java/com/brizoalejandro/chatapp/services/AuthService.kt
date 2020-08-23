@@ -17,15 +17,12 @@ import org.koin.core.KoinComponent
 import java.lang.Exception
 
 
-class AuthService(val context: Context): AuthInterface, KoinComponent {
+class AuthService(val context: Context, val repoService: RepositoryService): AuthInterface, KoinComponent {
 
     private val TAG = "[AUTH]"
 
     val firebaseAuth: FirebaseAuth
         get() { return FirebaseAuth.getInstance() }
-
-    val firebaseDB: FirebaseFirestore
-        get() { return Firebase.firestore }
 
     val currentUser: FirebaseUser?
         get() { return firebaseAuth.currentUser }
@@ -55,7 +52,7 @@ class AuthService(val context: Context): AuthInterface, KoinComponent {
                         Log.d(TAG, "Auth Success")
 
                         //SAVE user
-                        firebaseDB?.let { db ->
+                        repoService.firebaseDB?.let { db ->
                             db.collection("users")
                                 .document(it.currentUser!!.uid)
                                 .set(it.currentUser?.toUser(name)!!.asHashmap())

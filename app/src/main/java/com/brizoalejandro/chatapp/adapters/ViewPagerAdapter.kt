@@ -1,4 +1,4 @@
-package com.brizoalejandro.chatapp.components
+package com.brizoalejandro.chatapp.adapters
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

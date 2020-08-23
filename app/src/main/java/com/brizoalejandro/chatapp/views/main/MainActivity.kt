@@ -8,7 +8,7 @@ import androidx.viewpager.widget.ViewPager
 import com.brizoalejandro.chatapp.R
 import com.brizoalejandro.chatapp.extensions.goTo
 import com.brizoalejandro.chatapp.views.auth.AuthActivity
-import com.brizoalejandro.chatapp.components.ViewPagerAdapter
+import com.brizoalejandro.chatapp.adapters.ViewPagerAdapter
 import com.brizoalejandro.chatapp.fragments.ChatsFragment
 import com.brizoalejandro.chatapp.fragments.UsersFragment
 import com.google.android.material.tabs.TabLayout
@@ -19,7 +19,8 @@ class MainActivity : AppCompatActivity() {
 
     private val mainPresenter = MainPresenter()
 
-    private var viewPagerAdapter = ViewPagerAdapter(supportFragmentManager)
+    private var viewPagerAdapter =
+        ViewPagerAdapter(supportFragmentManager)
 
     private val viewPager: ViewPager?
         get() { return view_pager }

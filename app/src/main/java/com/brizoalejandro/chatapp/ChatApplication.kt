@@ -2,6 +2,7 @@ package com.brizoalejandro.chatapp
 
 import android.app.Application
 import com.brizoalejandro.chatapp.services.AuthService
+import com.brizoalejandro.chatapp.services.RepositoryService
 import nl.komponents.kovenant.android.startKovenant
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -28,5 +29,6 @@ class ChatApplication: Application() {
 }
 
 val appModules = module {
-    single { AuthService(androidContext()) }
+    single { RepositoryService(androidContext())}
+    single { AuthService(androidContext(), get()) }
 }
