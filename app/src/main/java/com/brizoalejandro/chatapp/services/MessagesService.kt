@@ -31,6 +31,9 @@ class MessagesService(context: Context,
     fun observeChatList(lifecycleOwner: LifecycleOwner, observer: Observer<List<ChatList>>) { chatList.observe(lifecycleOwner, observer) }
     fun removeChatListObserver(observer: Observer<List<ChatList>>) { chatList.removeObserver(observer) }
 
+    private var usersChats: MutableLiveData<ArrayList<User>> = MutableLiveData()
+    fun observeUserChats(lifecycleOwner: LifecycleOwner, observer: Observer<ArrayList<User>>) { usersChats.observe(lifecycleOwner, observer) }
+    fun removeUsersChatsObserver(observer: Observer<ArrayList<User>>) { usersChats.removeObserver(observer) }
 
 
 
@@ -127,7 +130,7 @@ class MessagesService(context: Context,
         if (isChatListConfigured)
             return
 
-        val ref = firebase.db.collection(firebase.CHAT_LIST_COLLECTION)
+        val ref = firebase.db.collection(firebase.CHAT_LIST_COLLECTION).whereEqualTo("uid", firebase.auth.currentUser?.uid)
         ref.addSnapshotListener { value, error ->
             if (error != null) {
                 return@addSnapshotListener
@@ -147,6 +150,9 @@ class MessagesService(context: Context,
                     _chatList.add(_chat)
                 }
                 chatList.value = _chatList.sortedWith(compareBy { it.timestamp })
+
+                requestUsers()
+
             } else {
                 //TODO handling Error
                 println("!@# ERROR")
@@ -154,5 +160,45 @@ class MessagesService(context: Context,
         }
 
     }
+
+
+    private fun requestUsers() {
+
+        val ref = firebase.db.collection("users")
+        ref.addSnapshotListener { value, error ->
+            if (error != null) {
+                return@addSnapshotListener
+            }
+
+            if (value != null && !value.isEmpty) {
+
+                usersChats.value?.clear()
+
+                val _users: ArrayList<User> = ArrayList()
+                for (doc in value) {
+                    val uid = doc.data["uid"] as String
+                    val _user = User(
+                        uid,
+                        doc.data["email"] as String,
+                        doc.data["name"] as String,
+                        doc.data["imageUrl"] as String)
+
+                    for (chat in chatList?.value!!) {
+
+                        if (chat.withUid == _user.uid) {
+                            _users.add(_user)
+                        }
+                    }
+                }
+
+                usersChats.value = _users
+
+            } else {
+                //TODO handling Error
+                println("!@# ERROR")
+            }
+        }
+    }
+
 
 }

@@ -80,9 +80,11 @@ class MessageActivity : AppCompatActivity() {
 
     private fun setupObservers() {
         chatObserver = Observer {
-            messageAdapter = MessageAdapter(this, it)
-            recyclerView.adapter = messageAdapter
-            recyclerView.adapter?.notifyDataSetChanged()
+            if (it != null) {
+                messageAdapter = MessageAdapter(this, it)
+                recyclerView.adapter = messageAdapter
+                recyclerView.adapter?.notifyDataSetChanged()
+            }
         }
 
         viewModel.observeChats(this, chatObserver!!)
