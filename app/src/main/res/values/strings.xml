@@ -1,9 +1,13 @@
 <resources>
     <string name="app_name">Chat App</string>
 
+    <string name="welcome">Welcome :D</string>
+    <string name="enter_name">Please enter your name</string>
     <string name="name_field">Name</string>
     <string name="email_field">Email</string>
     <string name="password_field">Password</string>
     <string name="register_btn_text">Enter</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

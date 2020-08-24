@@ -1,4 +1,4 @@
-package com.brizoalejandro.chatapp.ui.auth
+package com.brizoalejandro.chatapp.views.auth
 
 import android.app.Activity
 import com.google.firebase.auth.FirebaseUser
@@ -8,8 +8,7 @@ import java.lang.ref.WeakReference
 
 interface AuthInterface {
 
-    fun createUser(name: String,
-                   email: String,
+    fun createUser(email: String,
                    password: String,
                    activity: WeakReference<Activity>): Promise<FirebaseUser?, Exception>
 

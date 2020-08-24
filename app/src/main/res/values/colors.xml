@@ -4,6 +4,9 @@
     <color name="colorPrimaryDark">#FFB74D</color>
     <color name="colorAccent">#29B6F6</color>
 
+    <color name="colorAmberPrimary">#ffd54f</color>
+    <color name="colorCyanPrimary">#80deea</color>
+
     <color name="black_with_transparency">#80000000</color>
 
 </resources>
