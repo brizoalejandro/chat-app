@@ -6,6 +6,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.brizoalejandro.chatapp.data.Chat
+import com.brizoalejandro.chatapp.data.ChatList
 import com.brizoalejandro.chatapp.data.User
 import com.google.firebase.Timestamp
 import nl.komponents.kovenant.Promise
@@ -19,14 +20,16 @@ class MessagesService(context: Context,
     private val TAG: String = "[MessagesService]"
 
 
-    private var chats: MutableLiveData<ArrayList<Chat>> = MutableLiveData()
+    private var isChatConfigured: Boolean = false
+    private var chats: MutableLiveData<List<Chat>> = MutableLiveData()
+    fun observeChats(lifecycleOwner: LifecycleOwner, observer: Observer<List<Chat>>) { chats.observe(lifecycleOwner, observer) }
+    fun removeChatsObserver(observer: Observer<List<Chat>>) { chats.removeObserver(observer) }
 
-    fun observeChats(lifecycleOwner: LifecycleOwner, observer: Observer<ArrayList<Chat>>) {
-        chats.observe(lifecycleOwner, observer)
-    }
 
-    fun removeChatsObserver(observer: Observer<ArrayList<Chat>>) { chats.removeObserver(observer) }
-
+    private var isChatListConfigured: Boolean = false
+    private var chatList: MutableLiveData<List<ChatList>> = MutableLiveData()
+    fun observeChatList(lifecycleOwner: LifecycleOwner, observer: Observer<List<ChatList>>) { chatList.observe(lifecycleOwner, observer) }
+    fun removeChatListObserver(observer: Observer<List<ChatList>>) { chatList.removeObserver(observer) }
 
 
 
@@ -54,6 +57,102 @@ class MessagesService(context: Context,
         }
 
         return deferred.promise
+    }
+
+
+    fun getMessages(receiverUid: String) {
+
+        val ref = firebase.db.collection(firebase.CHATS_COLLECTION)
+        ref.addSnapshotListener { value, error ->
+            if (error != null) {
+                return@addSnapshotListener
+            }
+
+            if (value != null && !value.isEmpty) {
+                chats.value = null
+
+                val _chats: ArrayList<Chat> = ArrayList()
+                for (doc in value) {
+                    val _chat = Chat(
+                        doc.data["sender"] as String,
+                        doc.data["receiver"] as String,
+                        doc.data["message"] as String,
+                        doc.data["timestamp"] as Timestamp)
+                    if ((_chat.receiver == repo.user.value?.uid && _chat.sender == receiverUid)
+                        ||_chat.receiver == receiverUid && _chat.sender == repo.user.value?.uid)
+                    {
+                        _chats.add(_chat)
+                    }
+                }
+                chats.value = _chats.sortedWith(compareBy { it.timestamp })
+            } else {
+                //TODO handling
+            }
+        }
+
+    }
+
+
+    fun addChatList(uid: String, withUid: String): Promise<Unit, Exception> {
+        val deferred = deferred<Unit, Exception>()
+
+        val timestamp = Timestamp.now()
+
+        val data = hashMapOf(
+            "uid" to uid,
+            "withUid" to withUid,
+            "status" to "active",
+            "timestamp" to timestamp
+        )
+
+        firebase.db.let { db ->
+            db.collection(firebase.CHAT_LIST_COLLECTION)
+                .document("$uid-$withUid")
+                .set(data)
+                .addOnSuccessListener { ref ->
+                    Log.d(TAG, "Chat list saved")
+                    deferred.resolve(Unit)
+                }.addOnFailureListener { e ->
+                    Log.e(TAG, e.toString())
+                    deferred.reject(e)
+                }
+        }
+
+        return deferred.promise
+    }
+
+
+
+    fun getChatLists() {
+        if (isChatListConfigured)
+            return
+
+        val ref = firebase.db.collection(firebase.CHAT_LIST_COLLECTION)
+        ref.addSnapshotListener { value, error ->
+            if (error != null) {
+                return@addSnapshotListener
+            }
+
+            if (value != null && !value.isEmpty) {
+                chats.value = null
+                isChatListConfigured = true
+
+                val _chatList: ArrayList<ChatList> = ArrayList()
+                for (doc in value) {
+                    val _chat = ChatList(
+                        doc.data["uid"] as String?,
+                        doc.data["withUid"] as String,
+                        doc.data["status"] as String,
+                        doc.data["timestamp"] as Timestamp)
+                    _chatList.add(_chat)
+                }
+                chatList.value = _chatList.sortedWith(compareBy { it.timestamp })
+            } else {
+                //TODO handling Error
+                println("!@# ERROR")
+            }
+        }
+
     }
 
 }

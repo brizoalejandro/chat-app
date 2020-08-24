@@ -13,6 +13,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.Query
 import nl.komponents.kovenant.Promise
 import nl.komponents.kovenant.deferred
+import nl.komponents.kovenant.then
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import java.lang.Exception
@@ -24,16 +25,14 @@ class MessageViewModel: ViewModel(), KoinComponent {
     private val TAG = "[MessageViewModel]"
 
     private val messageService: MessagesService = get()
-    private val firebase: FirebaseProvider = get()
     private val repo: RepositoryService = get()
 
-    private var chats: MutableLiveData<List<Chat>> = MutableLiveData()
 
     fun observeChats(lifecycleOwner: LifecycleOwner, observer: Observer<List<Chat>>) {
-        chats.observe(lifecycleOwner, observer)
+        messageService.observeChats(lifecycleOwner, observer)
     }
 
-    fun removeChatsObserver(observer: Observer<List<Chat>>) { chats.removeObserver(observer) }
+    fun removeChatsObserver(observer: Observer<List<Chat>>) { messageService.removeChatsObserver(observer) }
 
     var isConfigured: Boolean = false
 
@@ -46,37 +45,8 @@ class MessageViewModel: ViewModel(), KoinComponent {
         if (isConfigured)
             return
 
-
-        val ref = firebase.db.collection("chats")
-        ref.addSnapshotListener { value, error ->
-            if (error != null) {
-                return@addSnapshotListener
-            }
-
-            if (value != null && !value.isEmpty) {
-                isConfigured = true
-                chats.value = null
-
-                val _chats: ArrayList<Chat> = ArrayList()
-                for (doc in value) {
-                    val _chat = Chat(
-                        doc.data["sender"] as String,
-                        doc.data["receiver"] as String,
-                        doc.data["message"] as String,
-                        doc.data["timestamp"] as Timestamp)
-                    if ((_chat.receiver == repo.user.value?.uid && _chat.sender == receiverUid)
-                        ||_chat.receiver == receiverUid && _chat.sender == repo.user.value?.uid)
-                    {
-                        _chats.add(_chat)
-                    }
-                }
-                chats.value = _chats.sortedWith(compareBy { it.timestamp })
-            } else {
-                //TODO handling Error
-                println("!@# ERROR")
-            }
-        }
-
+        messageService.getMessages(receiverUid!!)
+        isConfigured = true
     }
 
     fun sendMessage(message: String): Promise<Unit, Exception> {
@@ -85,7 +55,11 @@ class MessageViewModel: ViewModel(), KoinComponent {
         println("!@# uid ${receiverUid}")
 
         messageService.sendMessage(receiverUid!!, message)
-            .success {
+            .then {
+                messageService.addChatList(repo.user.value?.uid!!, receiverUid!!)
+            }.then {
+                messageService.addChatList(receiverUid!!, repo.user.value?.uid!!)
+            }.success {
                 deferred.resolve(Unit)
             }.fail {
                 deferred.reject(it)
