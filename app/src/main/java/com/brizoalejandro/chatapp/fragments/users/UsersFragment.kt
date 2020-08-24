@@ -31,9 +31,7 @@ class UsersFragment : Fragment() {
 
         viewModel = ViewModelProviders.of(this).get(UsersViewModel::class.java)
 
-        if (!viewModel.isConfigured) {
-            viewModel.requestUsers()
-        }
+        viewModel.requestUsers()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

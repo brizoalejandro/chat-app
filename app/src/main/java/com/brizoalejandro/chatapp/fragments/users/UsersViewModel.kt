@@ -27,6 +27,8 @@ class UsersViewModel: ViewModel(), KoinComponent {
 
 
     fun requestUsers() {
+        if (isConfigured)
+            return
 
         val ref = firebase.db.collection("users")
         ref.addSnapshotListener { value, error ->

@@ -48,7 +48,8 @@ class UserAdapter(private var context: Context, listUsers: ArrayList<User>): Rec
 
         holder.itemView.setOnClickListener {
             val intent = Intent(context, MessageActivity::class.java)
-            intent.putExtra("user_uid", user.uid)
+            intent.putExtra(MessageActivity.RECEIVER_UID, user.uid)
+            intent.putExtra(MessageActivity.RECEIVER_NAME, user.name)
             context.startActivity(intent)
         }
     }

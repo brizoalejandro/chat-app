@@ -16,5 +16,6 @@ class FirebaseProvider {
 
     val USERS_COLLECTION: String = "users"
     val CHATS_COLLECTION: String = "chats"
+    val CHAT_LIST_COLLECTION: String = "chat-list"
 
 }
