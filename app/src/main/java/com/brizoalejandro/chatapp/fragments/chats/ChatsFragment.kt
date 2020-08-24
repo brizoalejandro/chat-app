@@ -1,4 +1,4 @@
-package com.brizoalejandro.chatapp.fragments
+package com.brizoalejandro.chatapp.fragments.chats
 
 
 import android.os.Bundle

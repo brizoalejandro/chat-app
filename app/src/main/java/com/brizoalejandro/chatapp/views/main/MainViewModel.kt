@@ -1,4 +1,4 @@
-package com.brizoalejandro.chatapp.viewmodels
+package com.brizoalejandro.chatapp.views.main
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
@@ -16,10 +16,10 @@ class MainViewModel: ViewModel(), KoinComponent {
     private var configured: Boolean = false
 
     fun observeUser(lifecycleOwner: LifecycleOwner, observer: Observer<User?>) {
-        repoService.user.observe(lifecycleOwner, observer)
+        repoService.observeUser(lifecycleOwner, observer)
     }
 
-    fun removeUserObserver(observer: Observer<User?>) { repoService.user.removeObserver(observer) }
+    fun removeUserObserver(observer: Observer<User?>) { repoService.removeUserObserver(observer) }
 
 
 

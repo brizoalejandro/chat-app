@@ -1,4 +1,4 @@
-package com.brizoalejandro.chatapp.fragments
+package com.brizoalejandro.chatapp.fragments.users
 
 
 import android.os.Bundle
@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.brizoalejandro.chatapp.R
 import com.brizoalejandro.chatapp.adapters.UserAdapter
 import com.brizoalejandro.chatapp.data.User
-import com.brizoalejandro.chatapp.viewmodels.UsersViewModel
 import kotlinx.android.synthetic.main.fragment_users.view.*
 
 class UsersFragment : Fragment() {

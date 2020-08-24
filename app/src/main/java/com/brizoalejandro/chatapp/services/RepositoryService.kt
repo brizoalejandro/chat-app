@@ -6,6 +6,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.brizoalejandro.chatapp.data.User
+import com.brizoalejandro.chatapp.extensions.toUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
@@ -14,12 +15,9 @@ import nl.komponents.kovenant.Promise
 import nl.komponents.kovenant.deferred
 import java.lang.Exception
 
-class RepositoryService(val context: Context) {
+class RepositoryService(val context: Context, private val firebase: FirebaseProvider) {
 
-
-    val firebaseDB: FirebaseFirestore
-        get() { return Firebase.firestore }
-
+    private val TAG: String = "[RepositoryService]"
 
     var user: MutableLiveData<User?> = MutableLiveData()
 
@@ -30,10 +28,10 @@ class RepositoryService(val context: Context) {
     fun removeUserObserver(observer: Observer<User?>) { user.removeObserver(observer) }
 
 
-    fun observerUserFromBD() {
-        val deferred = deferred<User?, Exception>()
 
-        val ref = firebaseDB.collection("users")
+    fun observerUserFromBD() {
+
+        val ref = firebase.db.collection(firebase.USERS_COLLECTION)
             .document(FirebaseAuth.getInstance().currentUser?.uid!!)
             .addSnapshotListener { snapshot, error ->
             if (error != null) {
@@ -53,20 +51,43 @@ class RepositoryService(val context: Context) {
         }
     }
 
+    fun saveUserOnDB(): Promise<Unit, Exception> {
+        val deferred = deferred<Unit, Exception>()
+
+        firebase.db.let { db ->
+            db.collection(firebase.USERS_COLLECTION)
+                .document(firebase.auth.currentUser!!.uid)
+                .set(firebase.auth.currentUser?.toUser()!!.asHashmap())
+                .addOnSuccessListener { ref ->
+                    Log.d(TAG, "User saved")
+                    deferred.resolve(Unit)
+                }.addOnFailureListener { e ->
+                    Log.e(TAG, e.toString())
+                    deferred.reject(e)
+                }
+        }
+
+        return deferred.promise
+    }
+
 
     fun updateUserName(name: String): Promise<Unit, Exception>{
         val deferred = deferred<Unit, Exception>()
 
-        firebaseDB.collection("users")
+        firebase.db.collection(firebase.USERS_COLLECTION)
             .document(FirebaseAuth.getInstance().currentUser?.uid!!)
             .update("name", name)
             .addOnSuccessListener { ref ->
+                Log.d(TAG, "User updated")
                 deferred.resolve(Unit)
             }.addOnFailureListener { e ->
+                Log.e(TAG, e.toString())
                 deferred.reject(e)
             }
 
         return deferred.promise
     }
+
+
 
 }

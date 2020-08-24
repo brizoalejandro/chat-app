@@ -12,10 +12,9 @@ import com.brizoalejandro.chatapp.extensions.goTo
 import com.brizoalejandro.chatapp.views.auth.AuthActivity
 import com.brizoalejandro.chatapp.adapters.ViewPagerAdapter
 import com.brizoalejandro.chatapp.data.User
-import com.brizoalejandro.chatapp.fragments.ChatsFragment
-import com.brizoalejandro.chatapp.fragments.UsersFragment
+import com.brizoalejandro.chatapp.fragments.chats.ChatsFragment
+import com.brizoalejandro.chatapp.fragments.users.UsersFragment
 import com.brizoalejandro.chatapp.fragments.dialog.EnterNameFragment
-import com.brizoalejandro.chatapp.viewmodels.MainViewModel
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 

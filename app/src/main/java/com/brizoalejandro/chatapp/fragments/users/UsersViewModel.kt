@@ -1,16 +1,16 @@
-package com.brizoalejandro.chatapp.viewmodels
+package com.brizoalejandro.chatapp.fragments.users
 
 import androidx.lifecycle.*
 import com.brizoalejandro.chatapp.data.User
 import com.brizoalejandro.chatapp.services.AuthService
-import com.brizoalejandro.chatapp.services.RepositoryService
+import com.brizoalejandro.chatapp.services.FirebaseProvider
 import org.koin.core.KoinComponent
 import org.koin.core.get
 
 
 class UsersViewModel: ViewModel(), KoinComponent {
 
-    private val repoService: RepositoryService = get()
+    private val firebase: FirebaseProvider = get()
     private val authService: AuthService = get()
 
     private var users: MutableLiveData<ArrayList<User>> = MutableLiveData()
@@ -28,7 +28,7 @@ class UsersViewModel: ViewModel(), KoinComponent {
 
     fun requestUsers() {
 
-        val ref = repoService.firebaseDB.collection("users")
+        val ref = firebase.db.collection("users")
         ref.addSnapshotListener { value, error ->
             if (error != null) {
                 return@addSnapshotListener

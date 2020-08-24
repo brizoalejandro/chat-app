@@ -14,15 +14,14 @@ import org.koin.core.KoinComponent
 import java.lang.Exception
 
 
-class AuthService(val context: Context, val repoService: RepositoryService): AuthInterface, KoinComponent {
+class AuthService(val context: Context,
+                  private val repoService: RepositoryService,
+                  private val firebase: FirebaseProvider): AuthInterface, KoinComponent {
 
-    private val TAG = "[AUTH]"
-
-    val firebaseAuth: FirebaseAuth
-        get() { return FirebaseAuth.getInstance() }
+    private val TAG: String = "[AuthService]"
 
     val currentUser: FirebaseUser?
-        get() { return firebaseAuth.currentUser }
+        get() { return firebase.auth.currentUser }
 
 
 
@@ -32,7 +31,7 @@ class AuthService(val context: Context, val repoService: RepositoryService): Aut
 
     override fun logout() {
         if (isLoggedIn()) {
-            firebaseAuth.signOut()
+            firebase.auth.signOut()
         }
     }
 
@@ -42,25 +41,18 @@ class AuthService(val context: Context, val repoService: RepositoryService): Aut
         val deferred = deferred<FirebaseUser?, Exception>()
 
         //AUTH
-        firebaseAuth?.let {
+        firebase.auth.let {
             it.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(activity.get()!!) { result ->
                     if (result.isSuccessful) {
                         Log.d(TAG, "Auth Success")
 
-                        //SAVE user
-                        repoService.firebaseDB?.let { db ->
-                            db.collection("users")
-                                .document(it.currentUser!!.uid)
-                                .set(it.currentUser?.toUser()!!.asHashmap())
-                                .addOnSuccessListener { ref ->
-                                    Log.d(TAG, "User saved")
-                                    deferred.resolve(firebaseAuth?.currentUser)
-                                }.addOnFailureListener { e ->
-                                    Log.e(TAG + "DB error", e.toString())
-                                    deferred.reject(e)
-                                }
-                        }
+                        repoService.saveUserOnDB()
+                            .success {
+                                deferred.resolve(firebase.auth.currentUser)
+                            }. fail { error ->
+                                deferred.reject(error)
+                            }
 
                     }
                 }
