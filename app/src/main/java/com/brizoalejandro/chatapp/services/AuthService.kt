@@ -7,6 +7,7 @@ import java.lang.ref.WeakReference
 import android.util.Log
 import com.brizoalejandro.chatapp.extensions.toUser
 import com.brizoalejandro.chatapp.views.auth.AuthInterface
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
 import nl.komponents.kovenant.Promise
 import nl.komponents.kovenant.deferred
@@ -45,7 +46,7 @@ class AuthService(val context: Context,
             it.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(activity.get()!!) { result ->
                     if (result.isSuccessful) {
-                        Log.d(TAG, "Auth Success")
+                        Log.d(TAG, "Auth account created")
 
                         repoService.saveUserOnDB()
                             .success {
@@ -57,8 +58,27 @@ class AuthService(val context: Context,
                     }
                 }
                 .addOnFailureListener { error ->
-                    Log.e(TAG, error.toString())
-                    deferred.reject(error)
+                    //Handle sign in if email already exists
+                    if (error is FirebaseAuthUserCollisionException) {
+                        Log.d(TAG, "Account already exists. Trying to sign in.")
+
+                        firebase.auth.signInWithEmailAndPassword(email, password)
+                            .addOnCompleteListener { result ->
+                                if (result.isSuccessful) {
+                                    Log.d(TAG, "Logged in!")
+                                    deferred.resolve(result.result?.user)
+                                } else {
+                                    deferred.reject(Exception("Error while trying to sign in. Try again later."))
+                                }
+                            }.addOnFailureListener { e ->
+                                Log.e(TAG, e.toString())
+                                deferred.reject(e)
+                            }
+                    } else {
+                        Log.e(TAG, error.toString())
+                        deferred.reject(error)
+                    }
+
                 }
         }
 
