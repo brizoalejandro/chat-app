@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "500173301078",
+    "firebase_url": "https://chatapp-8609c.firebaseio.com",
+    "project_id": "chatapp-8609c",
+    "storage_bucket": "chatapp-8609c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:500173301078:android:1bed71d1df06d3e840a2f7",
+        "android_client_info": {
+          "package_name": "com.brizoalejandro.chatapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "500173301078-f1s5v9g0cq8jherpvah98qonmchof6cc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADlSgSJYxZgzuCGcPo0WRyTn42zCNCenM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "500173301078-f1s5v9g0cq8jherpvah98qonmchof6cc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
