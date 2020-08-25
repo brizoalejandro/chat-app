@@ -1,17 +1,16 @@
 package com.brizoalejandro.chatapp.views.auth
 
 import android.app.Activity
+import android.content.Context
+import com.brizoalejandro.chatapp.R
 import com.brizoalejandro.chatapp.services.AuthService
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseUser
 import nl.komponents.kovenant.Promise
-import org.koin.core.KoinComponent
-import org.koin.core.get
 import java.lang.Exception
 import java.lang.ref.WeakReference
 
-class AuthPresenter: AuthInterface, KoinComponent {
-
-    private val authService: AuthService = get()
+class AuthPresenter(val context: Context, val authService: AuthService): AuthInterface {
 
 
     override fun createUser(email: String,
@@ -27,4 +26,23 @@ class AuthPresenter: AuthInterface, KoinComponent {
     override fun logout() {
         authService.logout()
     }
+
+
+    fun areFieldsValid(email: TextInputLayout, password: TextInputLayout): Boolean {
+        var errors = 0
+
+        if (email.editText?.text.toString() == "") {
+            email.isErrorEnabled = true
+            email.error = context.getString(R.string.error_field_required)
+            errors++
+        }
+        if (password.editText?.text.toString() == "") {
+            password.isErrorEnabled = true
+            password.error = context.getString(R.string.error_field_required)
+            errors++
+        }
+
+        return errors == 0
+    }
+
 }

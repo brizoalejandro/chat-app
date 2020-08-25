@@ -12,6 +12,7 @@
         android:padding="8dp"
         android:text="..."
         android:textSize="16sp"
+        android:fontFamily="@font/comfortaa_regular"
         android:background="@drawable/message_bg_left"/>
 
 </RelativeLayout>

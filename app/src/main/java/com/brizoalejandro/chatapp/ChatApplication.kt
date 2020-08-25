@@ -5,6 +5,7 @@ import com.brizoalejandro.chatapp.services.AuthService
 import com.brizoalejandro.chatapp.services.FirebaseProvider
 import com.brizoalejandro.chatapp.services.MessagesService
 import com.brizoalejandro.chatapp.services.RepositoryService
+import com.brizoalejandro.chatapp.views.auth.AuthPresenter
 import nl.komponents.kovenant.android.startKovenant
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -35,4 +36,5 @@ val appModules = module {
     single { RepositoryService(androidContext(), get())}
     single { AuthService(androidContext(), get(), get()) }
     single { MessagesService(androidContext(), get(), get()) }
+    single { AuthPresenter(androidContext(), get()) }
 }
